@@ -21,12 +21,12 @@ app.use((req, res, next) => {
   );
   next();
 });
-mongoose.connect("mongodb://127.0.0.1:27017/Gamesite", {
+mongoose.connect("mongodb://localhost:27017/Gamesite", {
   serverSelectionTimeoutMS: 30000,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-global.games = await Games.find({});
+global.games = await Games.find({}).maxTimeMS(30000);
 // console.log(global.games);
 app.get("/", (req, res) => {
   res.send("hello");
