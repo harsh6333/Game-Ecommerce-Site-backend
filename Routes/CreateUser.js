@@ -180,7 +180,7 @@ router.post("/remove-from-cart", verifyToken, async (req, res) => {
 
 router.get("/get-games", async (req, res) => {
   try {
-    const games = await Games.find();
+    const games = await Games.find().maxTimeMS(30000); 
     res.json({ games });
   } catch (error) {
     console.error("Error fetching games:", error);
