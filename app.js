@@ -7,6 +7,7 @@ import Games from "./models/games.js";
 import cors from "cors";
 import "dotenv/config";
 const app = express();
+const PORT =3000;
 app.use(
   cors({
     origin: "http://localhost:5173", // Allow requests from your frontend's origin
@@ -31,6 +32,6 @@ app.get("/", (req, res) => {
 app.use(express.json());
 app.use("/api", Createuser);
 app.use("/api", DisplayData);
-app.listen(3000, () => {
-  console.log("server running");
+app.listen(PORT, () => {
+  console.log(`server running on ${PORT}`);
 });
