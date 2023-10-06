@@ -44,8 +44,8 @@ async function connectToDatabase() {
 
 async function fetchGamesFromDatabase() {
   try {
-    global.games = await Games.find({});
-    console.log("Fetched games from MongoDB:", global.games);
+    global.games = await Games.find({}).maxTimeMS(30000); 
+    console.log("Fetched games from MongoDB");
   } catch (error) {
     console.error("Error fetching games from MongoDB:", error);
   }
