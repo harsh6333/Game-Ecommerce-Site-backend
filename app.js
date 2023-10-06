@@ -36,7 +36,6 @@ app.get("/", (req, res) => {
 app.use(express.json());
 
 app.use("/api", Createuser);
-app.use("/api", DisplayData);
 
 app.listen(PORT, async () => {
   try {
