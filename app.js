@@ -1,8 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import Createuser from "./Routes/CreateUser.js";
-import DisplayData from "./Routes/DisplayData.js";
-import User from "./models/user.js";
 import Games from "./models/games.js";
 import cors from "cors";
 import "dotenv/config";
