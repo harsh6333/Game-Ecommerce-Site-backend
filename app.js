@@ -25,7 +25,9 @@ app.use((req, res, next) => {
   next();
 });
 
-mongoose.connect("mongodb://127.0.0.1:27017/Gamesite");
+mongoose.connect("mongodb://127.0.0.1:27017/Gamesite", {
+  serverSelectionTimeoutMS: 30000, // Increase the timeout as needed
+});
 
 app.get("/", (req, res) => {
   res.send("Hello");
