@@ -6,9 +6,7 @@ import "dotenv/config";
 import Games from "../models/games.js";
 import { body, validationResult } from "express-validator";
 import User from "../models/user.js";
-import { auth } from "google-auth-library";
 const router = express.Router();
-// const JWT_SECRET = "BROWHATSHAPPiojhi4fhjkbhfjklbrjkfbhghjgvhjghjf";
 router.post(
   "/createuser",
   [
