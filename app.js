@@ -9,7 +9,7 @@ const PORT = 3000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://game-ecommerce-site.netlify.app",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: ["Content-Type", "Authorization"],
   })
