@@ -190,8 +190,14 @@ router.get("/get-games", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const gameId = req.params.id;
-    const game = await Games.findOne({ id: String(gameId) }).maxTimeMS(30000);
+    // Parse the gameId parameter as a number
+    const gameId = parseInt(req.params.id);
+
+    if (isNaN(gameId)) {
+      return res.status(400).json({ error: "Invalid game ID" });
+    }
+
+    const game = await Games.findOne({ id: gameId }).maxTimeMS(30000);
 
     if (!game) {
       return res.status(404).json({ error: "Game not found" });
@@ -203,5 +209,6 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 export default router;

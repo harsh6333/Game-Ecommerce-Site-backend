@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 const gameSchema = new mongoose.Schema({
-  id:Number,
+  id: Number,
   num: Number,
   name: String,
   image: String,
