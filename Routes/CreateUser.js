@@ -1,13 +1,12 @@
 import express from "express";
+// import body from 'express-validators'
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import Games from "../models/games.js";
 import { body, validationResult } from "express-validator";
 import User from "../models/user.js";
-
 const router = express.Router();
-
 router.post(
   "/createuser",
   [
@@ -15,7 +14,7 @@ router.post(
     body("Username").isLength({ min: 5 }),
     body(
       "password",
-      "Your Password should have at least 5 characters"
+      "Your Password should have atleasst 5 characters"
     ).isLength({ min: 5 }),
   ],
   async (req, res) => {
@@ -47,7 +46,7 @@ router.post(
 router.post("/loginuser", async (req, res) => {
   let Username = req.body.Username;
   try {
-    let UserData = await User.findOne({ Username }).maxTimeMS(30000);
+    let UserData = await User.findOne({ Username });
     if (!UserData) {
       return res.status(400).json({ errors: "User Doesn't Exist" });
     }
@@ -58,6 +57,7 @@ router.post("/loginuser", async (req, res) => {
     if (!pwdCompare) {
       return res.status(400).json({ errors: "Please Enter Correct Password" });
     }
+    // console.log(UserData.id);
     const data = {
       user: {
         id: UserData.id,
@@ -67,6 +67,7 @@ router.post("/loginuser", async (req, res) => {
     const authToken = jwt.sign(data, process.env.JWT_SECRET);
     console.log(authToken);
     return res.json({ success: true, authToken: authToken });
+    // console.log(authToken);
   } catch (error) {
     console.error("Error creating user:", error);
     res.json({
@@ -74,9 +75,9 @@ router.post("/loginuser", async (req, res) => {
     });
   }
 });
-
 const verifyToken = (req, res, next) => {
   const authToken = req.header("Authorization");
+  // console.log(authToken);
   if (!authToken) {
     return res.status(401).json({ errors: "Access denied. Please log in." });
   }
@@ -90,16 +91,20 @@ const verifyToken = (req, res, next) => {
     res.status(400).json({ errors: "Invalid token." });
   }
 };
-
+// Create a new route to get user data
 router.get("/get-user", verifyToken, async (req, res) => {
   try {
+    // Get the user ID from the verified token
     const userId = req.userId;
-    const user = await User.findById(userId).maxTimeMS(30000);
+
+    // Find the user by their ID
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
     }
 
+    // Return the user's username and email
     res.json({ username: user.Username, email: user.email });
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -110,12 +115,15 @@ router.get("/get-user", verifyToken, async (req, res) => {
 router.post("/add-to-cart", verifyToken, async (req, res) => {
   try {
     const { num, name, image, price } = req.body;
-    const user = await User.findById(req.userId).maxTimeMS(30000);
+
+    // Find the user by their ID
+    const user = await User.findById(req.userId);
 
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
     }
 
+    // Create an object representing the item to add to the cart
     const cartItem = {
       num,
       name,
@@ -123,7 +131,10 @@ router.post("/add-to-cart", verifyToken, async (req, res) => {
       price: 99, // You can customize the price as needed
     };
 
+    // Add the cartItem to the user's cart array
     user.cart.push(cartItem);
+
+    // Save the updated user document
     await user.save();
 
     console.log(`Item added to cart for user: ${user.Username}`);
@@ -139,13 +150,18 @@ router.post("/add-to-cart", verifyToken, async (req, res) => {
 
 router.get("/get-cart-items", verifyToken, async (req, res) => {
   try {
+    // Get the user ID from the verified token
     const userId = req.userId;
-    const user = await User.findById(userId).maxTimeMS(30000);
+    // console.log(userId);
+
+    // Find the user by their ID
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
     }
 
+    // Return the user's cart items
     res.json({ cartItems: user.cart });
   } catch (error) {
     console.error("Error fetching cart items:", error);
@@ -156,13 +172,18 @@ router.get("/get-cart-items", verifyToken, async (req, res) => {
 router.post("/remove-from-cart", verifyToken, async (req, res) => {
   try {
     const { itemId } = req.body;
-    const user = await User.findById(req.userId).maxTimeMS(30000);
+
+    // Find the user by their ID
+    const user = await User.findById(req.userId);
 
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
     }
 
+    // Remove the item with the specified itemId from the user's cart
     user.cart = user.cart.filter((item) => item._id.toString() !== itemId);
+
+    // Save the updated user document
     await user.save();
 
     console.log(`Item removed from cart for user: ${user.Username}`);
@@ -180,14 +201,39 @@ router.post("/remove-from-cart", verifyToken, async (req, res) => {
 
 router.get("/get-games", async (req, res) => {
   try {
-    const games = await Games.find().maxTimeMS(30000);
+    // Retrieve the game data from the Game model
+    const games = await Games.find();
+
+    // Send the game data as a JSON response
     res.json({ games });
   } catch (error) {
     console.error("Error fetching games:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+router.get("/get-user-cart", verifyToken, async (req, res) => {
+  try {
+    // Get the user ID from the verified token
+    const userId = req.userId;
 
+    // Find the user by their ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ errors: "User not found." });
+    }
+
+    // Log user and user's cart for debugging purposes
+    // console.log("User:", user);
+    // console.log("User's Cart:", user.cart);
+
+    // Return the user's cart data
+    res.json({ userCart: user.cart });
+  } catch (error) {
+    console.error("Error fetching user's cart data:", error);
+    res.status(500).json({ errors: "Server error." });
+  }
+});
 router.get("/:id", async (req, res) => {
   try {
     // Parse the gameId parameter as a number
@@ -209,6 +255,5 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 export default router;
