@@ -191,7 +191,7 @@ router.get("/get-games", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const gameId = req.params.id;
-    const game = await Games.findOne({ id: gameId }).maxTimeMS(30000);
+    const game = await Games.findOne({ id: String(gameId) }).maxTimeMS(30000);
 
     if (!game) {
       return res.status(404).json({ error: "Game not found" });
