@@ -47,7 +47,7 @@ router.post(
 router.post("/loginuser", async (req, res) => {
   let Username = req.body.Username;
   try {
-    let UserData = await User.findOne({ Username });
+    let UserData = await User.findOne({ Username }).maxTimeMS(30000);
     if (!UserData) {
       return res.status(400).json({ errors: "User Doesn't Exist" });
     }
@@ -94,7 +94,7 @@ const verifyToken = (req, res, next) => {
 router.get("/get-user", verifyToken, async (req, res) => {
   try {
     const userId = req.userId;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).maxTimeMS(30000);
 
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
@@ -110,7 +110,7 @@ router.get("/get-user", verifyToken, async (req, res) => {
 router.post("/add-to-cart", verifyToken, async (req, res) => {
   try {
     const { num, name, image, price } = req.body;
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.userId).maxTimeMS(30000);
 
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
@@ -140,7 +140,7 @@ router.post("/add-to-cart", verifyToken, async (req, res) => {
 router.get("/get-cart-items", verifyToken, async (req, res) => {
   try {
     const userId = req.userId;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).maxTimeMS(30000);
 
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
@@ -156,7 +156,7 @@ router.get("/get-cart-items", verifyToken, async (req, res) => {
 router.post("/remove-from-cart", verifyToken, async (req, res) => {
   try {
     const { itemId } = req.body;
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.userId).maxTimeMS(30000);
 
     if (!user) {
       return res.status(404).json({ errors: "User not found." });
@@ -180,7 +180,7 @@ router.post("/remove-from-cart", verifyToken, async (req, res) => {
 
 router.get("/get-games", async (req, res) => {
   try {
-    const games = await Games.find().maxTimeMS(30000); 
+    const games = await Games.find().maxTimeMS(30000);
     res.json({ games });
   } catch (error) {
     console.error("Error fetching games:", error);
@@ -191,7 +191,7 @@ router.get("/get-games", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const gameId = req.params.id;
-    const game = await Games.findOne({ id: gameId }).maxTimeMS(30000); 
+    const game = await Games.findOne({ id: gameId }).maxTimeMS(30000);
 
     if (!game) {
       return res.status(404).json({ error: "Game not found" });
