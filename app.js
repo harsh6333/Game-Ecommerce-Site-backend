@@ -9,14 +9,14 @@ const PORT = 3000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173/",
+    origin: "http://localhost:5173",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173/");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
